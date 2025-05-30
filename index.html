@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Situs Jual Beli Akun Premium</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="#">Akun<span>Pro</span></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#beranda">Beranda</a></li>
+                <li><a href="#katalog">Katalog Akun</a></li>
+                <li><a href="#cara-beli">Cara Beli</a></li>
+                <li><a href="#kontak">Kontak</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button class="btn-login">Login</button>
+                <button class="btn-register">Daftar</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero" class="hero-section">
+            <div class="hero-content">
+                <h1>Dapatkan Akun Premium Impian Anda</h1>
+                <p>Pilihan terlengkap, harga terbaik, proses instan.</p>
+                <a href="#katalog" class="btn-primary">Lihat Katalog</a>
+            </div>
+        </section>
+
+        <section id="katalog" class="katalog-section">
+            <h2>Katalog Akun</h2>
+            <div class="katalog-grid">
+                <div class="akun-card">
+                    <img src="https://via.placeholder.com/300x200?text=Akun+Netflix" alt="Akun Netflix">
+                    <h3>Akun Netflix Premium</h3>
+                    <p>Masa Aktif: 1 Bulan</p>
+                    <p class="price">Rp 50.000</p>
+                    <button class="btn-beli" data-akun-id="netflix-premium-1">Beli Sekarang</button>
+                </div>
+                <div class="akun-card">
+                    <img src="https://via.placeholder.com/300x200?text=Akun+Spotify" alt="Akun Spotify">
+                    <h3>Akun Spotify Premium</h3>
+                    <p>Masa Aktif: 3 Bulan</p>
+                    <p class="price">Rp 75.000</p>
+                    <button class="btn-beli" data-akun-id="spotify-premium-3">Beli Sekarang</button>
+                </div>
+                </div>
+        </section>
+
+        <section id="cara-beli" class="cara-beli-section">
+            <h2>Cara Beli Mudah</h2>
+            <div class="steps-grid">
+                <div class="step-item">
+                    <i class="fas fa-search"></i>
+                    <h3>Pilih Akun</h3>
+                    <p>Telusuri katalog kami dan temukan akun yang Anda inginkan.</p>
+                </div>
+                <div class="step-item">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h3>Lakukan Pembayaran</h3>
+                    <p>Pilih metode pembayaran yang tersedia.</p>
+                </div>
+                <div class="step-item">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Akun Diterima Otomatis</h3>
+                    <p>Akun akan dikirimkan secara instan setelah pembayaran terverifikasi.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 AkunPro. All rights reserved.</p>
+    </footer>
+
+    <div id="modal-checkout" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Detail Pembelian</h2>
+            <p id="modal-akun-nama"></p>
+            <p id="modal-akun-harga"></p>
+            <form id="checkout-form">
+                <label for="email">Email Anda:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="payment-method">Metode Pembayaran:</label>
+                <select id="payment-method" name="payment-method" required>
+                    <option value="">Pilih Metode</option>
+                    <option value="dana">DANA</option>
+                    <option value="ovo">OVO</option>
+                    <option value="gopay">GoPay</option>
+                    </select>
+                <button type="submit" class="btn-process-order">Proses Pesanan</button>
+            </form>
+            <div id="payment-instructions" style="display: none;">
+                <h3>Instruksi Pembayaran:</h3>
+                <p>Silakan transfer ke nomor virtual account/QR code berikut:</p>
+                <p id="payment-details"></p>
+                <p>Pesanan Anda akan diproses otomatis setelah pembayaran terverifikasi.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
